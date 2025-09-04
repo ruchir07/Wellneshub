@@ -9,9 +9,9 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 transition-[var(--transition-smooth)]",
-        hero: "bg-gradient-to-r from-primary to-secondary text-white shadow-[var(--shadow-wellness)] hover:shadow-xl hover:scale-105 transition-[var(--transition-bounce)]",
-        wellness: "bg-wellness text-wellness-foreground hover:bg-wellness/80 shadow-[var(--shadow-soft)] transition-[var(--transition-smooth)]",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        hero: "bg-gradient-to-r from-primary to-secondary text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300",
+        wellness: "bg-wellness text-wellness-foreground hover:bg-wellness/80 shadow-md transition-all duration-300",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:

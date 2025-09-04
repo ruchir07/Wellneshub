@@ -82,7 +82,7 @@ export const FeaturesOverview = () => {
               className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-border/50"
             >
               <CardHeader className="space-y-3">
-                <div className={`w-12 h-12 rounded-lg bg-gradient-to-br from-${feature.color.replace('text-', '')}/10 to-${feature.color.replace('text-', '')}/20 flex items-center justify-center`}>
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                   <feature.icon className={`w-6 h-6 ${feature.color}`} />
                 </div>
                 <CardTitle className="text-lg font-semibold">
