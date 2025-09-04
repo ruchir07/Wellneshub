@@ -28,6 +28,9 @@ export const Navigation = () => {
             <Link to="/booking" className="text-muted-foreground hover:text-foreground transition-colors">
               Book Session
             </Link>
+            <Link to="/games" className="text-muted-foreground hover:text-foreground transition-colors">
+              Mindful Games
+            </Link>
           </div>
 
           <div className="flex items-center gap-3">
