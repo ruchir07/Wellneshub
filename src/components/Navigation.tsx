@@ -28,8 +28,11 @@ export const Navigation = () => {
             <Link to="/booking" className="text-muted-foreground hover:text-foreground transition-colors">
               Book Session
             </Link>
-            <Link to="/games" className="text-muted-foreground hover:text-foreground transition-colors">
-              Mindful Games
+            <Link to="/calendar" className="text-muted-foreground hover:text-foreground transition-colors">
+              Academic Calendar
+            </Link>
+            <Link to="/forum" className="text-muted-foreground hover:text-foreground transition-colors">
+              Community Forum
             </Link>
           </div>
 
