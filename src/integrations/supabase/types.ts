@@ -14,13 +14,196 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      academic_events: {
+        Row: {
+          completed: boolean
+          created_at: string
+          description: string | null
+          due_date: string
+          event_type: string
+          id: string
+          priority: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          description?: string | null
+          due_date: string
+          event_type: string
+          id?: string
+          priority?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          description?: string | null
+          due_date?: string
+          event_type?: string
+          id?: string
+          priority?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      forum_comments: {
+        Row: {
+          anonymous: boolean
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+          updated_at: string
+          user_id: string
+          votes: number
+        }
+        Insert: {
+          anonymous?: boolean
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+          updated_at?: string
+          user_id: string
+          votes?: number
+        }
+        Update: {
+          anonymous?: boolean
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          updated_at?: string
+          user_id?: string
+          votes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "forum_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forum_posts: {
+        Row: {
+          anonymous: boolean
+          category: string
+          content: string
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+          votes: number
+        }
+        Insert: {
+          anonymous?: boolean
+          category?: string
+          content: string
+          created_at?: string
+          id?: string
+          title: string
+          updated_at?: string
+          user_id: string
+          votes?: number
+        }
+        Update: {
+          anonymous?: boolean
+          category?: string
+          content?: string
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          votes?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          anonymous_username: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          anonymous_username?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          anonymous_username?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      stress_assessments: {
+        Row: {
+          academic_event_id: string
+          additional_concerns: string | null
+          confidence_level: number
+          created_at: string
+          id: string
+          stress_level: number
+          user_id: string
+        }
+        Insert: {
+          academic_event_id: string
+          additional_concerns?: string | null
+          confidence_level: number
+          created_at?: string
+          id?: string
+          stress_level: number
+          user_id: string
+        }
+        Update: {
+          academic_event_id?: string
+          additional_concerns?: string | null
+          confidence_level?: number
+          created_at?: string
+          id?: string
+          stress_level?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stress_assessments_academic_event_id_fkey"
+            columns: ["academic_event_id"]
+            isOneToOne: false
+            referencedRelation: "academic_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_anonymous_username: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

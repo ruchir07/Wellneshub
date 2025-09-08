@@ -8,6 +8,8 @@ import CheckIn from "./pages/CheckIn";
 import Chatbot from "./pages/Chatbot";
 import Booking from "./pages/Booking";
 import MindfulGames from "./pages/MindfulGames";
+import AcademicCalendar from "./pages/AcademicCalendar";
+import CommunityForum from "./pages/CommunityForum";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +26,8 @@ const App = () => (
           <Route path="/chatbot" element={<Chatbot />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/games" element={<MindfulGames />} />
+          <Route path="/calendar" element={<AcademicCalendar />} />
+          <Route path="/forum" element={<CommunityForum />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
