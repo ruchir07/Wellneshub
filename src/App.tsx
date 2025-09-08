@@ -10,6 +10,7 @@ import Booking from "./pages/Booking";
 import MindfulGames from "./pages/MindfulGames";
 import AcademicCalendar from "./pages/AcademicCalendar";
 import CommunityForum from "./pages/CommunityForum";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/calendar" element={<AcademicCalendar />} />
           <Route path="/forum" element={<CommunityForum />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

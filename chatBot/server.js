@@ -57,10 +57,16 @@ app.post("/chat", async (req, res) => {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const prompt = `You are a supportive mental health counselor. Be empathetic, concise, and encouraging. 
-    The user says: "${message}"`;
+    const sentimentPrompt = `Analyze the sentiment and emotional state of this message and respond as a supportive mental health counselor. 
+    
+    First, identify the emotional state (positive, negative, neutral, anxious, stressed, depressed, happy, etc.) and intensity (1-10).
+    Then provide an empathetic, personalized response based on that emotional state.
+    
+    User message: "${message}"
+    
+    Be empathetic, concise, and encouraging. Tailor your response to their emotional state.`;
 
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContent(sentimentPrompt);
     const botReply = result.response.text();
 
     // Save assistant reply

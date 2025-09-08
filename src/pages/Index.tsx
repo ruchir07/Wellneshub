@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigation } from '@/components/Navigation';
+import Navigation from '@/components/Navigation';
 import { HeroSection } from '@/components/HeroSection';
 import { FeaturesOverview } from '@/components/FeaturesOverview';
 import { QuickActions } from '@/components/QuickActions';
