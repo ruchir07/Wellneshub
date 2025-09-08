@@ -1,686 +1,51 @@
-// // import React, { useState, useRef, useEffect } from 'react';
-// // import { Navigation } from '@/components/Navigation';
-// // import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// // import { Button } from '@/components/ui/button';
-// // import { Input } from '@/components/ui/input';
-// // import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-// // import { Send, Bot, User, Heart, MessageCircle } from 'lucide-react';
-// // import { useToast } from '@/hooks/use-toast';
-
-// // interface Message {
-// //   id: string;
-// //   text: string;
-// //   sender: 'user' | 'bot';
-// //   timestamp: Date;
-// // }
-
-// // const botResponses = {
-// //   greeting: [
-// //     "Hello! I'm here to support you. How are you feeling today?",
-// //     "Hi there! I'm your AI wellness companion. What's on your mind?",
-// //     "Welcome! I'm here to listen and help. How can I support you today?"
-// //   ],
-// //   anxiety: [
-// //     "I understand you're feeling anxious. Let's try a quick breathing exercise: breathe in for 4 counts, hold for 4, exhale for 6. Would you like to try this together?",
-// //     "Anxiety can feel overwhelming. Remember, these feelings are temporary. Can you tell me what specifically is making you feel anxious right now?",
-// //     "It's completely normal to feel anxious sometimes. One helpful technique is the 5-4-3-2-1 grounding method. Would you like me to guide you through it?"
-// //   ],
-// //   stress: [
-// //     "I hear that you're stressed. Stress is your body's way of responding to challenges. What's the main source of your stress right now?",
-// //     "Feeling stressed is tough. Let's break this down - is this stress about studies, relationships, or something else? I'm here to help you work through it.",
-// //     "Stress can feel overwhelming, but remember you're stronger than you think. Have you tried any relaxation techniques before?"
-// //   ],
-// //   sadness: [
-// //     "I'm sorry you're going through a difficult time. Your feelings are valid, and it's okay to feel sad. Would you like to talk about what's causing these feelings?",
-// //     "Thank you for sharing that with me. Sadness is a natural emotion, and it's important to acknowledge it. Is there anything specific that triggered these feelings?",
-// //     "I understand you're feeling down. Sometimes talking about it can help. I'm here to listen without judgment."
-// //   ],
-// //   support: [
-// //     "Remember, seeking help is a sign of strength, not weakness. Have you considered speaking with a professional counselor? I can help you book an appointment.",
-// //     "You're taking an important step by reaching out. If you'd like additional support, we have professional counselors available. Would you like to know more?",
-// //     "I'm glad you're here. While I can provide some guidance, sometimes it's helpful to speak with a human counselor too. Our booking system makes it easy and confidential."
-// //   ],
-// //   resources: [
-// //     "We have many resources available including guided meditations, breathing exercises, and wellness articles. What type of support would be most helpful right now?",
-// //     "I can recommend some immediate coping strategies or direct you to our resource library. Which would you prefer?",
-// //     "There are several ways I can help - through guided exercises, providing information, or connecting you with additional resources. What feels right for you?"
-// //   ]
-// // };
-
-// // const Chatbot = () => {
-// //   const [messages, setMessages] = useState<Message[]>([
-// //     {
-// //       id: '1',
-// //       text: "Hello! I'm your AI wellness companion. I'm here to provide support, coping strategies, and a safe space to talk. How are you feeling today?",
-// //       sender: 'bot',
-// //       timestamp: new Date()
-// //     }
-// //   ]);
-// //   const [inputText, setInputText] = useState('');
-// //   const [isTyping, setIsTyping] = useState(false);
-// //   const messagesEndRef = useRef<HTMLDivElement>(null);
-// //   const { toast } = useToast();
-
-// //   const scrollToBottom = () => {
-// //     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-// //   };
-
-// //   useEffect(() => {
-// //     scrollToBottom();
-// //   }, [messages]);
-
-// //   const generateBotResponse = (userMessage: string): string => {
-// //     const lowerMessage = userMessage.toLowerCase();
-    
-// //     if (lowerMessage.includes('anxious') || lowerMessage.includes('anxiety') || lowerMessage.includes('worried')) {
-// //       return botResponses.anxiety[Math.floor(Math.random() * botResponses.anxiety.length)];
-// //     }
-// //     if (lowerMessage.includes('stress') || lowerMessage.includes('overwhelmed') || lowerMessage.includes('pressure')) {
-// //       return botResponses.stress[Math.floor(Math.random() * botResponses.stress.length)];
-// //     }
-// //     if (lowerMessage.includes('sad') || lowerMessage.includes('depressed') || lowerMessage.includes('down') || lowerMessage.includes('low')) {
-// //       return botResponses.sadness[Math.floor(Math.random() * botResponses.sadness.length)];
-// //     }
-// //     if (lowerMessage.includes('help') || lowerMessage.includes('support') || lowerMessage.includes('counselor')) {
-// //       return botResponses.support[Math.floor(Math.random() * botResponses.support.length)];
-// //     }
-// //     if (lowerMessage.includes('resource') || lowerMessage.includes('exercise') || lowerMessage.includes('meditation')) {
-// //       return botResponses.resources[Math.floor(Math.random() * botResponses.resources.length)];
-// //     }
-// //     if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
-// //       return botResponses.greeting[Math.floor(Math.random() * botResponses.greeting.length)];
-// //     }
-    
-// //     // Default supportive response
-// //     return "Thank you for sharing that with me. I'm here to listen and support you. Can you tell me more about how you're feeling or what's been on your mind lately?";
-// //   };
-
-// //   const handleSend = async () => {
-// //     if (!inputText.trim()) return;
-
-// //     const userMessage: Message = {
-// //       id: Date.now().toString(),
-// //       text: inputText,
-// //       sender: 'user',
-// //       timestamp: new Date()
-// //     };
-
-// //     setMessages(prev => [...prev, userMessage]);
-// //     setInputText('');
-// //     setIsTyping(true);
-
-// //     // Simulate typing delay
-// //     setTimeout(() => {
-// //       const botResponse: Message = {
-// //         id: (Date.now() + 1).toString(),
-// //         text: generateBotResponse(inputText),
-// //         sender: 'bot',
-// //         timestamp: new Date()
-// //       };
-      
-// //       setMessages(prev => [...prev, botResponse]);
-// //       setIsTyping(false);
-// //     }, 1500);
-// //   };
-
-// //   const handleKeyPress = (e: React.KeyboardEvent) => {
-// //     if (e.key === 'Enter' && !e.shiftKey) {
-// //       e.preventDefault();
-// //       handleSend();
-// //     }
-// //   };
-
-// //   return (
-// //     <div className="min-h-screen bg-background">
-// //       <Navigation />
-// //       <div className="max-w-4xl mx-auto px-4 py-6">
-// //         <Card className="h-[calc(100vh-12rem)] flex flex-col">
-// //           <CardHeader className="border-b border-border bg-wellness/30">
-// //             <div className="flex items-center gap-3">
-// //               <div className="w-10 h-10 bg-gradient-to-br from-secondary to-accent rounded-full flex items-center justify-center">
-// //                 <Bot className="w-6 h-6 text-white" />
-// //               </div>
-// //               <div>
-// //                 <CardTitle className="flex items-center gap-2">
-// //                   AI Wellness Companion
-// //                   <Heart className="w-4 h-4 text-secondary" />
-// //                 </CardTitle>
-// //                 <p className="text-sm text-muted-foreground">Available 24/7 for support</p>
-// //               </div>
-// //             </div>
-// //           </CardHeader>
-
-// //           <CardContent className="flex-1 overflow-y-auto p-6 space-y-4">
-// //             {messages.map((message) => (
-// //               <div
-// //                 key={message.id}
-// //                 className={`flex gap-3 ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
-// //               >
-// //                 <Avatar className="w-8 h-8">
-// //                   <AvatarFallback className={message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}>
-// //                     {message.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
-// //                   </AvatarFallback>
-// //                 </Avatar>
-                
-// //                 <div className={`max-w-[70%] ${message.sender === 'user' ? 'text-right' : 'text-left'}`}>
-// //                   <div
-// //                     className={`inline-block p-3 rounded-2xl ${
-// //                       message.sender === 'user'
-// //                         ? 'bg-primary text-primary-foreground rounded-tr-sm'
-// //                         : 'bg-muted text-muted-foreground rounded-tl-sm'
-// //                     }`}
-// //                   >
-// //                     <p className="leading-relaxed">{message.text}</p>
-// //                   </div>
-// //                   <p className="text-xs text-muted-foreground mt-1">
-// //                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-// //                   </p>
-// //                 </div>
-// //               </div>
-// //             ))}
-            
-// //             {isTyping && (
-// //               <div className="flex gap-3">
-// //                 <Avatar className="w-8 h-8">
-// //                   <AvatarFallback className="bg-secondary text-secondary-foreground">
-// //                     <Bot className="w-4 h-4" />
-// //                   </AvatarFallback>
-// //                 </Avatar>
-// //                 <div className="bg-muted text-muted-foreground p-3 rounded-2xl rounded-tl-sm">
-// //                   <div className="flex gap-1">
-// //                     <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-// //                     <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-// //                     <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-// //                   </div>
-// //                 </div>
-// //               </div>
-// //             )}
-// //             <div ref={messagesEndRef} />
-// //           </CardContent>
-
-// //           <div className="border-t border-border p-4">
-// //             <div className="flex gap-2">
-// //               <Input
-// //                 placeholder="Type your message here..."
-// //                 value={inputText}
-// //                 onChange={(e) => setInputText(e.target.value)}
-// //                 onKeyPress={handleKeyPress}
-// //                 className="flex-1"
-// //               />
-// //               <Button onClick={handleSend} variant="hero" size="icon">
-// //                 <Send className="w-4 h-4" />
-// //               </Button>
-// //             </div>
-// //             <p className="text-xs text-muted-foreground mt-2 text-center">
-// //               Remember: For urgent mental health crises, please contact emergency services or a crisis helpline immediately.
-// //             </p>
-// //           </div>
-// //         </Card>
-// //       </div>
-// //     </div>
-// //   );
-// // };
-
-// // export default Chatbot;
-
-// // import React, { useState, useRef, useEffect } from 'react';
-// // import { Navigation } from '@/components/Navigation';
-// // import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// // import { Button } from '@/components/ui/button';
-// // import { Input } from '@/components/ui/input';
-// // import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-// // import { Send, Bot, User, Heart } from 'lucide-react';
-// // import { useToast } from '@/hooks/use-toast';
-
-// // interface Message {
-// //   id: string;
-// //   text: string;
-// //   sender: 'user' | 'bot';
-// //   timestamp: Date;
-// // }
-
-// // const Chatbot = () => {
-// //   const [messages, setMessages] = useState<Message[]>([
-// //     {
-// //       id: '1',
-// //       text: "Hello! I'm your AI wellness companion. I'm here to provide support, coping strategies, and a safe space to talk. How are you feeling today?",
-// //       sender: 'bot',
-// //       timestamp: new Date()
-// //     }
-// //   ]);
-// //   const [inputText, setInputText] = useState('');
-// //   const [isTyping, setIsTyping] = useState(false);
-// //   const messagesEndRef = useRef<HTMLDivElement>(null);
-// //   const { toast } = useToast();
-
-// //   const scrollToBottom = () => {
-// //     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-// //   };
-
-// //   useEffect(() => {
-// //     scrollToBottom();
-// //   }, [messages]);
-
-// //   // Call chatbot backend
-// //   const sendMessageToBackend = async (messageText: string) => {
-// //     try {
-// //       const response = await fetch('http://localhost:5000/chat', {
-// //         method: 'POST',
-// //         headers: { 'Content-Type': 'application/json' },
-// //         body: JSON.stringify({ userId: 'demo-user', message: messageText }) // replace with real userId
-// //       });
-
-// //       const data = await response.json();
-// //       return data; // { reply: string, flagged: boolean }
-// //     } catch (error) {
-// //       console.error('Chatbot API error:', error);
-// //       return { reply: 'Sorry, something went wrong. Please try again.', flagged: false };
-// //     }
-// //   };
-
-// //   const handleSend = async () => {
-// //     if (!inputText.trim()) return;
-
-// //     const userMessage: Message = {
-// //       id: Date.now().toString(),
-// //       text: inputText,
-// //       sender: 'user',
-// //       timestamp: new Date()
-// //     };
-
-// //     setMessages(prev => [...prev, userMessage]);
-// //     setInputText('');
-// //     setIsTyping(true);
-
-// //     const backendResponse = await sendMessageToBackend(inputText);
-
-// //     const botMessage: Message = {
-// //       id: (Date.now() + 1).toString(),
-// //       text: backendResponse.reply,
-// //       sender: 'bot',
-// //       timestamp: new Date()
-// //     };
-
-// //     setMessages(prev => [...prev, botMessage]);
-// //     setIsTyping(false);
-
-// //     if (backendResponse.flagged) {
-// //       toast({
-// //         title: '⚠️ Important',
-// //         description: 'This message was flagged as sensitive. Please reach out to professional help if needed.'
-// //       });
-// //     }
-// //   };
-
-// //   const handleKeyPress = (e: React.KeyboardEvent) => {
-// //     if (e.key === 'Enter' && !e.shiftKey) {
-// //       e.preventDefault();
-// //       handleSend();
-// //     }
-// //   };
-
-// //   return (
-// //     <div className="min-h-screen bg-background">
-// //       <Navigation />
-// //       <div className="max-w-4xl mx-auto px-4 py-6">
-// //         <Card className="h-[calc(100vh-12rem)] flex flex-col">
-// //           <CardHeader className="border-b border-border bg-wellness/30">
-// //             <div className="flex items-center gap-3">
-// //               <div className="w-10 h-10 bg-gradient-to-br from-secondary to-accent rounded-full flex items-center justify-center">
-// //                 <Bot className="w-6 h-6 text-white" />
-// //               </div>
-// //               <div>
-// //                 <CardTitle className="flex items-center gap-2">
-// //                   AI Wellness Companion
-// //                   <Heart className="w-4 h-4 text-secondary" />
-// //                 </CardTitle>
-// //                 <p className="text-sm text-muted-foreground">Available 24/7 for support</p>
-// //               </div>
-// //             </div>
-// //           </CardHeader>
-
-// //           <CardContent className="flex-1 overflow-y-auto p-6 space-y-4">
-// //             {messages.map((message) => (
-// //               <div
-// //                 key={message.id}
-// //                 className={`flex gap-3 ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
-// //               >
-// //                 <Avatar className="w-8 h-8">
-// //                   <AvatarFallback className={message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}>
-// //                     {message.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
-// //                   </AvatarFallback>
-// //                 </Avatar>
-                
-// //                 <div className={`max-w-[70%] ${message.sender === 'user' ? 'text-right' : 'text-left'}`}>
-// //                   <div
-// //                     className={`inline-block p-3 rounded-2xl ${
-// //                       message.sender === 'user'
-// //                         ? 'bg-primary text-primary-foreground rounded-tr-sm'
-// //                         : 'bg-muted text-muted-foreground rounded-tl-sm'
-// //                     }`}
-// //                   >
-// //                     <p className="leading-relaxed">{message.text}</p>
-// //                   </div>
-// //                   <p className="text-xs text-muted-foreground mt-1">
-// //                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-// //                   </p>
-// //                 </div>
-// //               </div>
-// //             ))}
-
-// //             {isTyping && (
-// //               <div className="flex gap-3">
-// //                 <Avatar className="w-8 h-8">
-// //                   <AvatarFallback className="bg-secondary text-secondary-foreground">
-// //                     <Bot className="w-4 h-4" />
-// //                   </AvatarFallback>
-// //                 </Avatar>
-// //                 <div className="bg-muted text-muted-foreground p-3 rounded-2xl rounded-tl-sm">
-// //                   <div className="flex gap-1">
-// //                     <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-// //                     <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-// //                     <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-// //                   </div>
-// //                 </div>
-// //               </div>
-// //             )}
-
-// //             <div ref={messagesEndRef} />
-// //           </CardContent>
-
-// //           <div className="border-t border-border p-4">
-// //             <div className="flex gap-2">
-// //               <Input
-// //                 placeholder="Type your message here..."
-// //                 value={inputText}
-// //                 onChange={(e) => setInputText(e.target.value)}
-// //                 onKeyPress={handleKeyPress}
-// //                 className="flex-1"
-// //               />
-// //               <Button onClick={handleSend} variant="hero" size="icon">
-// //                 <Send className="w-4 h-4" />
-// //               </Button>
-// //             </div>
-// //             <p className="text-xs text-muted-foreground mt-2 text-center">
-// //               Remember: For urgent mental health crises, please contact emergency services or a crisis helpline immediately.
-// //             </p>
-// //           </div>
-// //         </Card>
-// //       </div>
-// //     </div>
-// //   );
-// // };
-
-// // export default Chatbot;
-// import React, { useState, useRef, useEffect } from 'react';
-// import { Navigation } from '@/components/Navigation';
-// import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// import { Button } from '@/components/ui/button';
-// import { Input } from '@/components/ui/input';
-// import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-// import { Send, Bot, User, Heart } from 'lucide-react';
-// import { useToast } from '@/hooks/use-toast';
-// import { useNavigate } from 'react-router-dom';
-
-// interface Message {
-//   id: string;
-//   text: string;
-//   sender: 'user' | 'bot';
-//   timestamp: Date;
-// }
-
-// const Chatbot = () => {
-//   const [messages, setMessages] = useState<Message[]>([
-//     {
-//       id: '1',
-//       text: "Hello! I'm your AI wellness companion. I'm here to provide support, coping strategies, and a safe space to talk. How are you feeling today?",
-//       sender: 'bot',
-//       timestamp: new Date()
-//     }
-//   ]);
-//   const [inputText, setInputText] = useState('');
-//   const [isTyping, setIsTyping] = useState(false);
-//   const messagesEndRef = useRef<HTMLDivElement>(null);
-//   const { toast } = useToast();
-
-//   const scrollToBottom = () => {
-//     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-//   };
-
-//   useEffect(() => {
-//     scrollToBottom();
-//   }, [messages]);
-
-//   // Send message to backend
-//   const sendMessageToBackend = async (messageText: string) => {
-//     try {
-//       const response = await fetch('http://localhost:5000/chat', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ userId: 'demo-user', message: messageText })
-//       });
-//       const data = await response.json();
-//       return data;
-//     } catch (error) {
-//       console.error('Chatbot API error:', error);
-//       return { reply: 'Sorry, something went wrong. Please try again.', flagged: false };
-//     }
-//   };
-
-//   const handleSend = async () => {
-//     if (!inputText.trim()) return;
-
-//     const userMessage: Message = {
-//       id: Date.now().toString(),
-//       text: inputText,
-//       sender: 'user',
-//       timestamp: new Date()
-//     };
-
-//     setMessages(prev => [...prev, userMessage]);
-//     setInputText('');
-//     setIsTyping(true);
-
-//     const backendResponse = await sendMessageToBackend(inputText);
-
-//     const botMessage: Message = {
-//       id: (Date.now() + 1).toString(),
-//       text: backendResponse.reply,
-//       sender: 'bot',
-//       timestamp: new Date()
-//     };
-
-//     setMessages(prev => [...prev, botMessage]);
-//     setIsTyping(false);
-
-//     if (backendResponse.flagged) {
-//       toast({
-//         title: '⚠️ Important',
-//         description: 'This message was flagged as sensitive. Please reach out to professional help if needed.'
-//       });
-//     }
-//   };
-
-//   const handleKeyPress = (e: React.KeyboardEvent) => {
-//     if (e.key === 'Enter' && !e.shiftKey) {
-//       e.preventDefault();
-//       handleSend();
-//     }
-//   };
-
-  
-
-// const navigate = useNavigate();
-
-// const handleGoHome = async () => {
-//   try {
-//     const res = await fetch(`http://localhost:5000/summarize/demo-user`, { method: 'POST' });
-//     const data = await res.json();
-
-//     toast({
-//       title: 'Chat Summary Saved',
-//       description: data.summary
-//     });
-
-//     navigate('/'); // go home after showing toast
-//   } catch (err) {
-//     console.error(err);
-//   }
-// };
-
-//   // Summarize chat when window/tab is closed
-//   useEffect(() => {
-//     const handleBeforeUnload = async (e: BeforeUnloadEvent) => {
-//       e.preventDefault();
-//       try {
-//         const response = await fetch('http://localhost:5000/summarize/demo-user', {
-//           method: 'POST',
-//           headers: { 'Content-Type': 'application/json' }
-//         });
-//         const data = await response.json();
-//         console.log('Session Summary:', data.summary);
-//         // Optional: Show toast
-//         toast({
-//           title: 'Session Summary',
-//           description: data.summary
-//         });
-//       } catch (err) {
-//         console.error('Summary API error:', err);
-//       }
-//     };
-
-//     window.addEventListener('beforeunload', handleBeforeUnload);
-
-//     return () => {
-//       window.removeEventListener('beforeunload', handleBeforeUnload);
-//     };
-//   }, []);
-
-//   return (
-//     <div className="min-h-screen bg-background">
-//       <Navigation />
-//       <div className="max-w-4xl mx-auto px-4 py-6">
-//         <Card className="h-[calc(100vh-12rem)] flex flex-col">
-//           <CardHeader className="border-b border-border bg-wellness/30">
-//             <div className="flex items-center gap-3">
-//               <div className="w-10 h-10 bg-gradient-to-br from-secondary to-accent rounded-full flex items-center justify-center">
-//                 <Bot className="w-6 h-6 text-white" />
-//               </div>
-//               <div>
-//                 <CardTitle className="flex items-center gap-2">
-//                   AI Wellness Companion
-//                   <Heart className="w-4 h-4 text-secondary" />
-//                 </CardTitle>
-//                 <p className="text-sm text-muted-foreground">Available 24/7 for support</p>
-//               </div>
-//             </div>
-//           </CardHeader>
-
-//           <CardContent className="flex-1 overflow-y-auto p-6 space-y-4">
-//             {messages.map((message) => (
-//               <div
-//                 key={message.id}
-//                 className={`flex gap-3 ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
-//               >
-//                 <Avatar className="w-8 h-8">
-//                   <AvatarFallback className={message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}>
-//                     {message.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
-//                   </AvatarFallback>
-//                 </Avatar>
-
-//                 <div className={`max-w-[70%] ${message.sender === 'user' ? 'text-right' : 'text-left'}`}>
-//                   <div
-//                     className={`inline-block p-3 rounded-2xl ${
-//                       message.sender === 'user'
-//                         ? 'bg-primary text-primary-foreground rounded-tr-sm'
-//                         : 'bg-muted text-muted-foreground rounded-tl-sm'
-//                     }`}
-//                   >
-//                     <p className="leading-relaxed">{message.text}</p>
-//                   </div>
-//                   <p className="text-xs text-muted-foreground mt-1">
-//                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-//                   </p>
-//                 </div>
-//               </div>
-//             ))}
-
-//             {isTyping && (
-//               <div className="flex gap-3">
-//                 <Avatar className="w-8 h-8">
-//                   <AvatarFallback className="bg-secondary text-secondary-foreground">
-//                     <Bot className="w-4 h-4" />
-//                   </AvatarFallback>
-//                 </Avatar>
-//                 <div className="bg-muted text-muted-foreground p-3 rounded-2xl rounded-tl-sm">
-//                   <div className="flex gap-1">
-//                     <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-//                     <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-//                     <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-//                   </div>
-//                 </div>
-//               </div>
-//             )}
-
-//             <div ref={messagesEndRef} />
-//           </CardContent>
-
-//           <div className="border-t border-border p-4">
-//             <div className="flex gap-2">
-//               <Input
-//                 placeholder="Type your message here..."
-//                 value={inputText}
-//                 onChange={(e) => setInputText(e.target.value)}
-//                 onKeyPress={handleKeyPress}
-//                 className="flex-1"
-//               />
-//               <Button onClick={handleSend} variant="hero" size="icon">
-//                 <Send className="w-4 h-4" />
-//               </Button>
-//             </div>
-//             <p className="text-xs text-muted-foreground mt-2 text-center">
-//               Remember: For urgent mental health crises, please contact emergency services or a crisis helpline immediately.
-//             </p>
-//           </div>
-//         </Card>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Chatbot;
-
 import React, { useState, useRef, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Send, Bot, User, Heart } from 'lucide-react';
+import { Send, Bot, User, Heart, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Message {
   id: string;
   text: string;
   sender: 'user' | 'bot';
   timestamp: Date;
+  flagged?: boolean;
 }
 
 const Chatbot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hello! I'm your AI wellness companion. I'm here to provide support, coping strategies, and a safe space to talk. How are you feeling today?",
+      text: "Hello! I'm your AI wellness companion with advanced emotional intelligence. I can understand your feelings and provide personalized mental health support. How are you feeling today?",
       sender: 'bot',
       timestamp: new Date()
     }
   ]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const navigate = useNavigate();
+
+  // Check authentication status
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user);
+    };
+    
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Scroll to bottom on new messages
   const scrollToBottom = () => {
@@ -691,25 +56,47 @@ const Chatbot = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Send message to backend
-  const sendMessageToBackend = async (messageText: string) => {
+  // Send message to AI using Supabase Edge Function
+  const sendMessageToAI = async (messageText: string) => {
     try {
-      const res = await fetch('http://localhost:5000/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: 'demo-user', message: messageText })
+      console.log('Sending message to AI:', messageText);
+      
+      const { data, error } = await supabase.functions.invoke('ai-chat', {
+        body: { 
+          userId: user?.id || 'anonymous', 
+          message: messageText 
+        }
       });
-      const data = await res.json();
-      return data; // { reply: string, flagged: boolean }
+
+      if (error) {
+        console.error('Edge function error:', error);
+        throw error;
+      }
+
+      console.log('AI response received:', data);
+      return data;
     } catch (err) {
-      console.error('Chatbot API error:', err);
-      return { reply: 'Sorry, something went wrong. Please try again.', flagged: false };
+      console.error('AI Chat error:', err);
+      return { 
+        reply: 'I apologize, but I\'m having trouble connecting right now. However, I want you to know that your feelings are valid and it\'s okay to reach out for support. How can I help you in the meantime?', 
+        flagged: false 
+      };
     }
   };
 
   // Handle sending message
   const handleSend = async () => {
     if (!inputText.trim()) return;
+
+    // Check if user is authenticated
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to use the AI chatbot feature.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -719,26 +106,39 @@ const Chatbot = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentMessage = inputText;
     setInputText('');
     setIsTyping(true);
 
-    const backendResponse = await sendMessageToBackend(inputText);
+    try {
+      const aiResponse = await sendMessageToAI(currentMessage);
 
-    const botMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      text: backendResponse.reply,
-      sender: 'bot',
-      timestamp: new Date()
-    };
+      const botMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: aiResponse.reply,
+        sender: 'bot',
+        timestamp: new Date(),
+        flagged: aiResponse.flagged
+      };
 
-    setMessages(prev => [...prev, botMessage]);
-    setIsTyping(false);
+      setMessages(prev => [...prev, botMessage]);
 
-    if (backendResponse.flagged) {
+      if (aiResponse.flagged) {
+        toast({
+          title: '⚠️ Crisis Support Available',
+          description: 'This conversation was flagged for safety. Please consider reaching out to professional help.',
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
       toast({
-        title: '⚠️ Important',
-        description: 'This message was flagged as sensitive. Please reach out to professional help if needed.'
+        title: "Connection Error",
+        description: "Failed to connect to AI service. Please try again.",
+        variant: "destructive",
       });
+    } finally {
+      setIsTyping(false);
     }
   };
 
@@ -749,117 +149,174 @@ const Chatbot = () => {
     }
   };
 
-  // Summarize chat
-  const summarizeChat = async () => {
-    try {
-      const res = await fetch('http://localhost:5000/summarize/demo-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      const data = await res.json();
-
-      toast({
-        title: 'Chat Summary Saved',
-        description: data.summary
-      });
-    } catch (err) {
-      console.error('Summary API error:', err);
-    }
-  };
-
-  // Handle navigation away
-  const handleGoHome = async () => {
-    await summarizeChat();
-    navigate('/');
-  };
-
-  // Generate summary when Chatbot component unmounts
-  useEffect(() => {
-    return () => {
-      summarizeChat(); // will still try to save summary when navigating away
-    };
-  }, []);
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto px-4 py-8 max-w-4xl">
+          <Card className="bg-card/80 backdrop-blur-sm border-border/50">
+            <CardHeader className="text-center">
+              <CardTitle className="flex items-center justify-center gap-2 text-2xl">
+                <Bot className="w-8 h-8 text-primary" />
+                AI Mental Health Companion
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-center py-8">
+              <div className="space-y-4">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                  <User className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground">Sign in Required</h3>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  Please sign in to access your personalized AI mental health companion with advanced sentiment analysis and emotional support.
+                </p>
+                <Button 
+                  onClick={() => window.location.href = '/auth'}
+                  className="mt-4"
+                >
+                  Sign In to Continue
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        <Card className="h-[calc(100vh-12rem)] flex flex-col">
-          <CardHeader className="border-b border-border bg-wellness/30">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-secondary to-accent rounded-full flex items-center justify-center">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <Card className="bg-card/80 backdrop-blur-sm border-border/50 h-[calc(100vh-12rem)]">
+          <CardHeader className="border-b border-border/50">
+            <CardTitle className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
                 <Bot className="w-6 h-6 text-white" />
               </div>
               <div>
-                <CardTitle className="flex items-center gap-2">
-                  AI Wellness Companion
-                  <Heart className="w-4 h-4 text-secondary" />
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">Available 24/7 for support</p>
+                <h2 className="text-xl font-bold text-foreground">AI Mental Health Companion</h2>
+                <p className="text-sm text-muted-foreground">
+                  Advanced sentiment analysis • Personalized emotional support
+                </p>
               </div>
-              <Button className="ml-auto" onClick={handleGoHome} variant="outline">
-                Back
-              </Button>
-            </div>
+            </CardTitle>
           </CardHeader>
-
-          <CardContent className="flex-1 overflow-y-auto p-6 space-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex gap-3 ${message.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
-              >
-                <Avatar className="w-8 h-8">
-                  <AvatarFallback className={message.sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}>
-                    {message.sender === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
-                  </AvatarFallback>
-                </Avatar>
-                <div className={`max-w-[70%] ${message.sender === 'user' ? 'text-right' : 'text-left'}`}>
-                  <div className={`inline-block p-3 rounded-2xl ${message.sender === 'user' ? 'bg-primary text-primary-foreground rounded-tr-sm' : 'bg-muted text-muted-foreground rounded-tl-sm'}`}>
-                    <p className="leading-relaxed">{message.text}</p>
+          
+          <CardContent className="flex flex-col h-full p-0">
+            {/* Messages Container */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex gap-3 ${
+                    message.sender === 'user' ? 'justify-end' : 'justify-start'
+                  }`}
+                >
+                  {message.sender === 'bot' && (
+                    <Avatar className="w-8 h-8 mt-1">
+                      <AvatarFallback className="bg-primary text-white">
+                        <Bot className="w-4 h-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+                  
+                  <div
+                    className={`max-w-[70%] rounded-lg px-4 py-3 ${
+                      message.sender === 'user'
+                        ? 'bg-primary text-primary-foreground ml-auto'
+                        : 'bg-muted text-foreground'
+                    }`}
+                  >
+                    <div className="flex items-start gap-2">
+                      {message.flagged && (
+                        <AlertTriangle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                      )}
+                      <p className="text-sm leading-relaxed">{message.text}</p>
+                    </div>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-xs text-muted-foreground">
+                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                      {message.sender === 'bot' && (
+                        <Heart className="w-3 h-3 text-red-400" />
+                      )}
+                    </div>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
+                  
+                  {message.sender === 'user' && (
+                    <Avatar className="w-8 h-8 mt-1">
+                      <AvatarFallback className="bg-secondary text-secondary-foreground">
+                        <User className="w-4 h-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
                 </div>
-              </div>
-            ))}
-            {isTyping && (
-              <div className="flex gap-3">
-                <Avatar className="w-8 h-8">
-                  <AvatarFallback className="bg-secondary text-secondary-foreground">
-                    <Bot className="w-4 h-4" />
-                  </AvatarFallback>
-                </Avatar>
-                <div className="bg-muted text-muted-foreground p-3 rounded-2xl rounded-tl-sm">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              ))}
+              
+              {isTyping && (
+                <div className="flex gap-3 justify-start">
+                  <Avatar className="w-8 h-8 mt-1">
+                    <AvatarFallback className="bg-primary text-white">
+                      <Bot className="w-4 h-4" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="bg-muted text-foreground rounded-lg px-4 py-3 max-w-[70%]">
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </CardContent>
-
-          <div className="border-t border-border p-4">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Type your message here..."
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="flex-1"
-              />
-              <Button onClick={handleSend} variant="hero" size="icon">
-                <Send className="w-4 h-4" />
-              </Button>
+              )}
+              
+              <div ref={messagesEndRef} />
             </div>
-            <p className="text-xs text-muted-foreground mt-2 text-center">
-              Remember: For urgent mental health crises, please contact emergency services or a crisis helpline immediately.
-            </p>
-          </div>
+            
+            {/* Input Area */}
+            <div className="border-t border-border/50 p-4">
+              <div className="flex gap-2">
+                <Input
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Share your thoughts and feelings..."
+                  className="flex-1"
+                  disabled={isTyping}
+                />
+                <Button 
+                  onClick={handleSend} 
+                  disabled={!inputText.trim() || isTyping}
+                  size="icon"
+                  className="h-10 w-10"
+                >
+                  <Send className="w-4 h-4" />
+                </Button>
+              </div>
+              <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
+                <Bot className="w-3 h-3" />
+                <span>AI-powered sentiment analysis and personalized emotional support</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      
+      {/* Crisis Support Notice */}
+      <div className="fixed bottom-4 right-4 max-w-sm">
+        <Card className="bg-card/95 backdrop-blur-sm border-border/50">
+          <CardContent className="p-3">
+            <div className="flex items-start gap-2">
+              <Heart className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-xs font-medium text-foreground">Crisis Support</p>
+                <p className="text-xs text-muted-foreground">
+                  If you're in crisis, please call your local emergency number or crisis hotline immediately.
+                </p>
+              </div>
+            </div>
+          </CardContent>
         </Card>
       </div>
     </div>
@@ -867,4 +324,3 @@ const Chatbot = () => {
 };
 
 export default Chatbot;
-
