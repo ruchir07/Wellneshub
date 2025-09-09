@@ -10,6 +10,8 @@ import Booking from "./pages/Booking";
 import MindfulGames from "./pages/MindfulGames";
 import AcademicCalendar from "./pages/AcademicCalendar";
 import CommunityForum from "./pages/CommunityForum";
+import AdminDashboard from "./pages/AdminDashboard";
+import StudentProfiles from "./pages/StudentProfiles";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -29,6 +31,8 @@ const App = () => (
           <Route path="/games" element={<MindfulGames />} />
           <Route path="/calendar" element={<AcademicCalendar />} />
           <Route path="/forum" element={<CommunityForum />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/profiles" element={<StudentProfiles />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />

@@ -53,6 +53,56 @@ export type Database = {
         }
         Relationships: []
       }
+      counselors: {
+        Row: {
+          availability_schedule: Json | null
+          bio: string | null
+          created_at: string
+          email: string | null
+          id: string
+          institution_id: string | null
+          is_active: boolean | null
+          name: string
+          phone: string | null
+          specialization: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          availability_schedule?: Json | null
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          institution_id?: string | null
+          is_active?: boolean | null
+          name: string
+          phone?: string | null
+          specialization?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          availability_schedule?: Json | null
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          institution_id?: string | null
+          is_active?: boolean | null
+          name?: string
+          phone?: string | null
+          specialization?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "counselors_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       forum_comments: {
         Row: {
           anonymous: boolean
@@ -130,6 +180,87 @@ export type Database = {
         }
         Relationships: []
       }
+      institutions: {
+        Row: {
+          contact_email: string | null
+          created_at: string
+          domain: string | null
+          emergency_number: string | null
+          helpline_number: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          primary_color: string | null
+          secondary_color: string | null
+          updated_at: string
+        }
+        Insert: {
+          contact_email?: string | null
+          created_at?: string
+          domain?: string | null
+          emergency_number?: string | null
+          helpline_number?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          primary_color?: string | null
+          secondary_color?: string | null
+          updated_at?: string
+        }
+        Update: {
+          contact_email?: string | null
+          created_at?: string
+          domain?: string | null
+          emergency_number?: string | null
+          helpline_number?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          primary_color?: string | null
+          secondary_color?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mental_health_assessments: {
+        Row: {
+          assessment_type: string
+          created_at: string
+          flagged_for_intervention: boolean | null
+          id: string
+          recommendations: string | null
+          responses: Json
+          severity_level: string | null
+          total_score: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assessment_type?: string
+          created_at?: string
+          flagged_for_intervention?: boolean | null
+          id?: string
+          recommendations?: string | null
+          responses?: Json
+          severity_level?: string | null
+          total_score?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assessment_type?: string
+          created_at?: string
+          flagged_for_intervention?: boolean | null
+          id?: string
+          recommendations?: string | null
+          responses?: Json
+          severity_level?: string | null
+          total_score?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           anonymous_username: string | null
@@ -191,6 +322,91 @@ export type Database = {
             columns: ["academic_event_id"]
             isOneToOne: false
             referencedRelation: "academic_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_resources: {
+        Row: {
+          category: string[] | null
+          created_at: string
+          description: string | null
+          id: string
+          institution_id: string | null
+          is_active: boolean | null
+          priority: number | null
+          resource_type: string
+          title: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          category?: string[] | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          institution_id?: string | null
+          is_active?: boolean | null
+          priority?: number | null
+          resource_type: string
+          title: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          category?: string[] | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          institution_id?: string | null
+          is_active?: boolean | null
+          priority?: number | null
+          resource_type?: string
+          title?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_resources_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_institutions: {
+        Row: {
+          created_at: string
+          id: string
+          institution_id: string | null
+          is_active: boolean | null
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          institution_id?: string | null
+          is_active?: boolean | null
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          institution_id?: string | null
+          is_active?: boolean | null
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_institutions_institution_id_fkey"
+            columns: ["institution_id"]
+            isOneToOne: false
+            referencedRelation: "institutions"
             referencedColumns: ["id"]
           },
         ]
