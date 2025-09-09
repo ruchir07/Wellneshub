@@ -17,25 +17,25 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 27%;
 
-    --primary: 200 95% 45%;
+    --primary: 220 90% 56%;
     --primary-foreground: 0 0% 100%;
     
-    --primary-soft: 200 60% 85%;
-    --primary-glow: 200 80% 60%;
+    --primary-soft: 220 70% 85%;
+    --primary-glow: 220 85% 70%;
 
-    --secondary: 165 55% 48%;
+    --secondary: 168 76% 42%;
     --secondary-foreground: 0 0% 100%;
     
-    --wellness: 165 45% 92%;
-    --wellness-foreground: 165 55% 25%;
+    --wellness: 168 65% 92%;
+    --wellness-foreground: 168 70% 25%;
 
-    --muted: 210 15% 95%;
-    --muted-foreground: 215 15% 55%;
+    --muted: 210 15% 96%;
+    --muted-foreground: 215 20% 50%;
 
-    --accent: 280 65% 60%;
+    --accent: 290 84% 60%;
     --accent-foreground: 0 0% 100%;
     
-    --accent-soft: 280 35% 90%;
+    --accent-soft: 290 45% 90%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -47,12 +47,17 @@ All colors MUST be HSL.
     --gradient-hero: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
     --gradient-wellness: linear-gradient(180deg, hsl(var(--wellness)), hsl(var(--primary-soft)));
     --gradient-accent: linear-gradient(45deg, hsl(var(--accent)), hsl(var(--primary-glow)));
+    --gradient-cosmic: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--secondary)) 100%);
+    --gradient-aurora: linear-gradient(45deg, hsl(var(--primary-glow)), hsl(var(--accent)) 30%, hsl(var(--secondary)) 70%, hsl(var(--primary)));
     
     --shadow-soft: 0 4px 20px -4px hsl(var(--primary) / 0.15);
     --shadow-wellness: 0 8px 32px -8px hsl(var(--secondary) / 0.2);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.3);
+    --shadow-floating: 0 20px 40px -12px hsl(var(--primary) / 0.25);
     
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-elastic: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     --radius: 0.5rem;
 
