@@ -80,28 +80,33 @@ Begin your response by briefly acknowledging their emotional state, then provide
 
     console.log("Sending request to Gemini API...");
 
-    // Call Gemini API
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
+    // Call Gemini API with retry logic
+    let retries = 3;
+    let lastError;
+    
+    while (retries > 0) {
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [
               {
-                text: sentimentPrompt
+                parts: [
+                  {
+                    text: sentimentPrompt
+                  }
+                ]
               }
-            ]
-          }
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 1024,
-        },
+            ],
+            generationConfig: {
+              temperature: 0.7,
+              topK: 40,
+              topP: 0.95,
+              maxOutputTokens: 1024,
+            },
         safetySettings: [
           {
             category: "HARM_CATEGORY_HARASSMENT",
@@ -124,9 +129,20 @@ Begin your response by briefly acknowledging their emotional state, then provide
     });
 
     if (!response.ok) {
-      console.error(`Gemini API error: ${response.status} ${response.statusText}`);
       const errorText = await response.text();
+      console.error(`Gemini API error: ${response.status} ${response.statusText}`);
       console.error("Error details:", errorText);
+      
+      // Check if it's a rate limit or overload error
+      if (response.status === 503 || response.status === 429) {
+        lastError = errorText;
+        retries--;
+        if (retries > 0) {
+          console.log(`Retrying... ${retries} attempts left`);
+          await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retry
+          continue;
+        }
+      }
       
       return new Response(
         JSON.stringify({ 
@@ -140,29 +156,54 @@ Begin your response by briefly acknowledging their emotional state, then provide
       );
     }
 
-    const data = await response.json();
-    console.log("Received response from Gemini API");
+        const data = await response.json();
+        console.log("Received response from Gemini API");
 
-    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-      console.error("Invalid response structure from Gemini API:", data);
-      return new Response(
-        JSON.stringify({ 
-          error: "Invalid AI response", 
-          reply: "I'm here to listen and support you. Could you tell me more about how you're feeling right now?" 
-        }), 
-        { 
-          status: 500, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+          console.error("Invalid response structure from Gemini API:", data);
+          return new Response(
+            JSON.stringify({ 
+              error: "Invalid AI response", 
+              reply: "I'm here to listen and support you. Could you tell me more about how you're feeling right now?" 
+            }), 
+            { 
+              status: 500, 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+            }
+          );
         }
-      );
+
+        const botReply = data.candidates[0].content.parts[0].text;
+        console.log(`Generated response for user ${userId}`);
+
+        return new Response(
+          JSON.stringify({ reply: botReply, flagged: false }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+        
+      } catch (fetchError) {
+        console.error(`Fetch attempt failed:`, fetchError);
+        lastError = fetchError;
+        retries--;
+        if (retries > 0) {
+          console.log(`Retrying... ${retries} attempts left`);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          continue;
+        }
+      }
     }
-
-    const botReply = data.candidates[0].content.parts[0].text;
-    console.log(`Generated response for user ${userId}`);
-
+    
+    // If all retries failed
+    console.error('All retry attempts failed:', lastError);
     return new Response(
-      JSON.stringify({ reply: botReply, flagged: false }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ 
+        error: "AI service temporarily unavailable. Please try again.", 
+        reply: "I'm experiencing some technical difficulties right now, but I'm still here for you. How are you feeling, and is there anything specific on your mind?" 
+      }), 
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
     );
 
   } catch (error) {

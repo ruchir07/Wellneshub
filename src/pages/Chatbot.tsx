@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
+import PanicButton from '@/components/PanicButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -187,6 +188,7 @@ const Chatbot = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
+      <PanicButton />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Card className="bg-card/80 backdrop-blur-sm border-border/50 h-[calc(100vh-12rem)]">
           <CardHeader className="border-b border-border/50">
