@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,45 +10,24 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CalendarDays, Clock, Star, Shield, CheckCircle, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
-const counselors = [
-  {
-    id: '1',
-    name: 'Dr. Sarah Johnson',
-    specialization: 'Anxiety & Stress Management',
-    experience: '8 years',
-    rating: 4.9,
-    avatar: 'SJ',
-    bio: 'Specialized in helping students manage academic stress and anxiety with evidence-based techniques.',
-    availability: 'Available today'
-  },
-  {
-    id: '2',
-    name: 'Dr. Michael Chen',
-    specialization: 'Depression & Mood Disorders',
-    experience: '12 years',
-    rating: 4.8,
-    avatar: 'MC',
-    bio: 'Expert in cognitive behavioral therapy and helping students navigate depression and mood challenges.',
-    availability: 'Available tomorrow'
-  },
-  {
-    id: '3',
-    name: 'Dr. Priya Sharma',
-    specialization: 'Relationship & Social Issues',
-    experience: '6 years',
-    rating: 4.9,
-    avatar: 'PS',
-    bio: 'Focuses on interpersonal relationships, social anxiety, and building healthy communication skills.',
-    availability: 'Available this week'
-  }
-];
+interface Counselor {
+  id: string;
+  name: string;
+  specialization: string[];
+  bio: string | null;
+  availability_schedule: any;
+  is_active: boolean;
+}
 
 const timeSlots = [
   '09:00 AM', '10:00 AM', '11:00 AM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'
 ];
 
 const Booking = () => {
+  const [counselors, setCounselors] = useState<Counselor[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCounselor, setSelectedCounselor] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -56,6 +35,34 @@ const Booking = () => {
   const [reason, setReason] = useState('');
   const [isBooked, setIsBooked] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    fetchCounselors();
+  }, []);
+
+  const fetchCounselors = async () => {
+    try {
+      // Use the public function that doesn't expose contact info
+      const { data, error } = await supabase
+        .rpc('get_public_counselor_info');
+
+      if (error) {
+        console.error('Error fetching counselors:', error);
+        toast({
+          title: "Error loading counselors",
+          description: "Please try refreshing the page.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setCounselors(data || []);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleBooking = () => {
     if (!selectedCounselor || !selectedDate || !selectedTime || !sessionType) {
@@ -75,6 +82,19 @@ const Booking = () => {
   };
 
   const selectedCounselorData = counselors.find(c => c.id === selectedCounselor);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="max-w-6xl mx-auto px-4 py-12">
+          <div className="text-center">
+            <p className="text-muted-foreground">Loading counselors...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isBooked) {
     return (
@@ -144,7 +164,15 @@ const Booking = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {counselors.map((counselor) => (
+                  {counselors.map((counselor) => {
+                    const initials = counselor.name
+                      .split(' ')
+                      .map(n => n[0])
+                      .join('')
+                      .toUpperCase();
+                    const primarySpecialization = counselor.specialization?.[0] || 'General Counseling';
+                    
+                    return (
                     <Card 
                       key={counselor.id}
                       className={`cursor-pointer transition-all hover:shadow-md ${
@@ -158,30 +186,33 @@ const Booking = () => {
                         <div className="flex gap-4">
                           <Avatar className="w-12 h-12">
                             <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
-                              {counselor.avatar}
+                              {initials}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1 space-y-2">
                             <div className="flex items-start justify-between">
                               <div>
                                 <h3 className="font-semibold text-foreground">{counselor.name}</h3>
-                                <p className="text-sm text-primary font-medium">{counselor.specialization}</p>
+                                <p className="text-sm text-primary font-medium">{primarySpecialization}</p>
                               </div>
                               <div className="flex items-center gap-1">
                                 <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                                <span className="text-sm font-medium">{counselor.rating}</span>
+                                <span className="text-sm font-medium">4.8</span>
                               </div>
                             </div>
-                            <p className="text-sm text-muted-foreground">{counselor.bio}</p>
+                            {counselor.bio && (
+                              <p className="text-sm text-muted-foreground">{counselor.bio}</p>
+                            )}
                             <div className="flex items-center gap-2">
-                              <Badge variant="secondary">{counselor.experience} experience</Badge>
-                              <Badge variant="outline" className="text-secondary">{counselor.availability}</Badge>
+                              <Badge variant="secondary">Licensed Professional</Badge>
+                              <Badge variant="outline" className="text-secondary">Available</Badge>
                             </div>
                           </div>
                         </div>
                       </CardContent>
                     </Card>
-                  ))}
+                    );
+                  })}
                 </CardContent>
               </Card>
 

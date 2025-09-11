@@ -420,6 +420,17 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_public_counselor_info: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          availability_schedule: Json
+          bio: string
+          id: string
+          is_active: boolean
+          name: string
+          specialization: string[]
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
