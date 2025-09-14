@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import PanicButton from '@/components/PanicButton';
+import VoiceEmotion from '@/components/VoiceEmotion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Send, Bot, User, Heart, AlertTriangle } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Send, Bot, User, Heart, AlertTriangle, Mic, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -21,7 +23,7 @@ const Chatbot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hello! I'm your AI wellness companion with advanced emotional intelligence. I can understand your feelings and provide personalized mental health support. How are you feeling today?",
+      text: "Hello! I'm your AI wellness companion with advanced emotional intelligence. I can understand your feelings and provide personalized mental health support. I also now have voice emotion analysis capabilities! How are you feeling today?",
       sender: 'bot',
       timestamp: new Date()
     }
@@ -29,6 +31,7 @@ const Chatbot = () => {
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [isVoiceDialogOpen, setIsVoiceDialogOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -150,6 +153,27 @@ const Chatbot = () => {
     }
   };
 
+  // Handle voice emotion confirmation
+  const handleVoiceEmotionConfirmed = async (emotion: string, mentalHealthStatus: string) => {
+    setIsVoiceDialogOpen(false);
+    
+    // Add a system message about the detected emotion
+    const emotionMessage: Message = {
+      id: Date.now().toString(),
+      text: `Voice analysis detected: ${emotion}. Mental health status: ${mentalHealthStatus.replace(/_/g, ' ')}. How can I help you process these feelings?`,
+      sender: 'bot',
+      timestamp: new Date(),
+      flagged: mentalHealthStatus.includes('anxiety') || mentalHealthStatus.includes('stress')
+    };
+    
+    setMessages(prev => [...prev, emotionMessage]);
+    
+    toast({
+      title: "🎤 Voice Analysis Complete",
+      description: `Detected emotion: ${emotion}. I'm here to help!`,
+    });
+  };
+
   if (!user) {
     return (
       <div className="min-h-screen bg-background">
@@ -196,12 +220,36 @@ const Chatbot = () => {
               <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
                 <Bot className="w-6 h-6 text-white" />
               </div>
-              <div>
+              <div className="flex-1">
                 <h2 className="text-xl font-bold text-foreground">AI Mental Health Companion</h2>
                 <p className="text-sm text-muted-foreground">
-                  Advanced sentiment analysis • Personalized emotional support
+                  Advanced sentiment analysis • Voice emotion detection • Personalized support
                 </p>
               </div>
+              <Dialog open={isVoiceDialogOpen} onOpenChange={setIsVoiceDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="flex items-center gap-2">
+                    <Mic className="w-4 h-4" />
+                    <Sparkles className="w-3 h-3" />
+                    Voice Analysis
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <Mic className="w-5 h-5 text-primary" />
+                      Voice Emotion Analysis
+                    </DialogTitle>
+                    <DialogDescription>
+                      Speak naturally about how you're feeling, and our AI will analyze your emotional state to provide personalized support.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <VoiceEmotion 
+                    userId={user?.id || 'anonymous'} 
+                    onEmotionConfirmed={handleVoiceEmotionConfirmed}
+                  />
+                </DialogContent>
+              </Dialog>
             </CardTitle>
           </CardHeader>
           
@@ -299,6 +347,9 @@ const Chatbot = () => {
               <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
                 <Bot className="w-3 h-3" />
                 <span>AI-powered sentiment analysis and personalized emotional support</span>
+                <span className="mx-2">•</span>
+                <Mic className="w-3 h-3" />
+                <span>Voice emotion detection available</span>
               </div>
             </div>
           </CardContent>
