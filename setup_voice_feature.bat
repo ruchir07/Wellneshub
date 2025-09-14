@@ -25,9 +25,9 @@ if errorlevel 1 (
 
 :: Check if ML model files exist
 echo Checking for ML model files...
-if not exist "..\VoiceBasedEmotionClassifier\models\iesc_cnn_model.h5" (
+if not exist "..\..\VoiceBasedEmotionClassifier\models\iesc_cnn_model.h5" (
     echo ERROR: ML model file not found
-    echo Expected: ..\VoiceBasedEmotionClassifier\models\iesc_cnn_model.h5
+    echo Expected: ..\..\VoiceBasedEmotionClassifier\models\iesc_cnn_model.h5
     echo Please ensure the VoiceBasedEmotionClassifier directory is present
     pause
     exit /b 1

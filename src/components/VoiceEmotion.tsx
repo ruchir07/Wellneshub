@@ -1,3 +1,16 @@
+/**
+ * Voice Emotion Analysis Component
+ * 
+ * DEVELOPMENT MODE: Uses direct API calls to local Python ML server (localhost:5000)
+ * PROTOTYPE MODE: Uncomment Supabase Edge Function calls for cloud deployment
+ * 
+ * To switch to prototype mode:
+ * 1. Deploy Supabase Edge Functions: npx supabase functions deploy voice-emotion
+ * 2. Deploy Supabase Edge Functions: npx supabase functions deploy federated-update  
+ * 3. Comment out the direct API calls (lines ~112-128 and ~194-216)
+ * 4. Uncomment the Supabase function calls (lines ~99-109 and ~174-189)
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -96,6 +109,8 @@ const VoiceEmotion: React.FC<VoiceEmotionProps> = ({ userId, onEmotionConfirmed 
     try {
       const audioBase64 = await convertToBase64(audioBlob);
       
+      // TODO: For prototype deployment, uncomment Supabase Edge Functions:
+      /*
       const { data, error } = await supabase.functions.invoke('voice-emotion', {
         body: {
           audioData: audioBase64,
@@ -104,6 +119,26 @@ const VoiceEmotion: React.FC<VoiceEmotionProps> = ({ userId, onEmotionConfirmed 
       });
 
       if (error) throw error;
+      */
+      
+      // For local development - Direct call to Python ML server
+      const response = await fetch('http://localhost:5000/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          audioData: audioBase64,
+          userId: userId
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      data.timestamp = new Date().toISOString(); // Add timestamp
 
       setPrediction(data);
       setShowConfirmation(true);
@@ -116,7 +151,7 @@ const VoiceEmotion: React.FC<VoiceEmotionProps> = ({ userId, onEmotionConfirmed 
       console.error('Emotion prediction failed:', err);
       toast({
         title: "Prediction Failed",
-        description: "Unable to analyze your voice. Please try again.",
+        description: "Unable to analyze your voice. Please make sure the ML server is running on port 5000.",
         variant: "destructive"
       });
     }
@@ -148,6 +183,8 @@ const VoiceEmotion: React.FC<VoiceEmotionProps> = ({ userId, onEmotionConfirmed 
       localStorage.setItem('voiceEmotionSessions', JSON.stringify(existingSessions));
 
       // Send to federated learning server
+      // TODO: For prototype deployment, uncomment Supabase Edge Functions:
+      /*
       const { data, error } = await supabase.functions.invoke('federated-update', {
         body: {
           userId,
@@ -162,6 +199,33 @@ const VoiceEmotion: React.FC<VoiceEmotionProps> = ({ userId, onEmotionConfirmed 
         console.warn('Federated learning update failed, will retry later:', error);
       } else {
         console.log('Federated learning update successful:', data);
+      }
+      */
+      
+      // For local development - Direct call to Python ML server
+      try {
+        const response = await fetch('http://localhost:5000/federated-update', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId,
+            voiceData: await convertToBase64(audioBlob),
+            confirmedEmotion,
+            originalEmotion: prediction.emotion,
+            confidence: prediction.confidence
+          })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Federated learning update successful:', data);
+        } else {
+          console.warn('Federated learning update failed, will retry later');
+        }
+      } catch (error) {
+        console.warn('Federated learning update failed:', error);
       }
 
       // Notify parent component
