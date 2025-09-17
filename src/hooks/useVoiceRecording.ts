@@ -23,6 +23,7 @@ export const useVoiceRecording = () => {
   const audioChunksRef = useRef<Blob[]>([]);
   const startTimeRef = useRef<number>(0);
   const durationIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isRecordingRef = useRef<boolean>(false);
 
   const clearError = useCallback(() => {
     setState(prev => ({ ...prev, error: null }));
@@ -67,11 +68,16 @@ export const useVoiceRecording = () => {
         });
         const audioURL = URL.createObjectURL(audioBlob);
         
+        // Calculate and preserve final duration
+        const finalDuration = Math.floor((Date.now() - startTimeRef.current) / 1000);
+        isRecordingRef.current = false;
+        
         setState(prev => ({
           ...prev,
           audioBlob,
           audioURL,
           isRecording: false,
+          duration: finalDuration,
         }));
 
         // Stop all tracks
@@ -81,7 +87,8 @@ export const useVoiceRecording = () => {
       // Start recording
       mediaRecorder.start();
       startTimeRef.current = Date.now();
-
+      isRecordingRef.current = true;
+      
       setState(prev => ({
         ...prev,
         isRecording: true,
@@ -92,9 +99,14 @@ export const useVoiceRecording = () => {
 
       // Start duration counter
       durationIntervalRef.current = setInterval(() => {
+        if (!isRecordingRef.current) return;
+        
+        const elapsed = Date.now() - startTimeRef.current;
+        const currentDuration = Math.floor(elapsed / 1000);
+        
         setState(prev => ({
           ...prev,
-          duration: Math.floor((Date.now() - startTimeRef.current) / 1000),
+          duration: currentDuration,
         }));
       }, 1000);
 
@@ -109,15 +121,17 @@ export const useVoiceRecording = () => {
   }, [clearError]);
 
   const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && state.isRecording) {
+    isRecordingRef.current = false;
+    
+    if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
-      
-      if (durationIntervalRef.current) {
-        clearInterval(durationIntervalRef.current);
-        durationIntervalRef.current = null;
-      }
     }
-  }, [state.isRecording]);
+    
+    if (durationIntervalRef.current) {
+      clearInterval(durationIntervalRef.current);
+      durationIntervalRef.current = null;
+    }
+  }, []);
 
   const resetRecording = useCallback(() => {
     if (state.audioURL) {
@@ -129,6 +143,8 @@ export const useVoiceRecording = () => {
       durationIntervalRef.current = null;
     }
 
+    isRecordingRef.current = false;
+    
     setState({
       isRecording: false,
       isProcessing: false,

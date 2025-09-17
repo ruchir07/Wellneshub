@@ -109,19 +109,9 @@ const VoiceEmotion: React.FC<VoiceEmotionProps> = ({ userId, onEmotionConfirmed 
     try {
       const audioBase64 = await convertToBase64(audioBlob);
       
-      // TODO: For prototype deployment, uncomment Supabase Edge Functions:
-      /*
-      const { data, error } = await supabase.functions.invoke('voice-emotion', {
-        body: {
-          audioData: audioBase64,
-          userId: userId
-        }
-      });
-
-      if (error) throw error;
-      */
+      // Direct call to your REAL ML server (same result as Supabase functions)
+      console.log('🎯 Calling your real VoiceBasedEmotionClassifier...');
       
-      // For local development - Direct call to Python ML server
       const response = await fetch('http://localhost:5000/predict', {
         method: 'POST',
         headers: {
@@ -134,11 +124,13 @@ const VoiceEmotion: React.FC<VoiceEmotionProps> = ({ userId, onEmotionConfirmed 
       });
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`Real ML server error: ${response.status}`);
       }
       
       const data = await response.json();
-      data.timestamp = new Date().toISOString(); // Add timestamp
+      data.timestamp = new Date().toISOString();
+      
+      console.log('✅ Real CNN prediction received:', data.emotion);
 
       setPrediction(data);
       setShowConfirmation(true);
@@ -182,27 +174,9 @@ const VoiceEmotion: React.FC<VoiceEmotionProps> = ({ userId, onEmotionConfirmed 
       existingSessions.push(voiceSession);
       localStorage.setItem('voiceEmotionSessions', JSON.stringify(existingSessions));
 
-      // Send to federated learning server
-      // TODO: For prototype deployment, uncomment Supabase Edge Functions:
-      /*
-      const { data, error } = await supabase.functions.invoke('federated-update', {
-        body: {
-          userId,
-          voiceData: await convertToBase64(audioBlob),
-          confirmedEmotion,
-          originalEmotion: prediction.emotion,
-          confidence: prediction.confidence
-        }
-      });
-
-      if (error) {
-        console.warn('Federated learning update failed, will retry later:', error);
-      } else {
-        console.log('Federated learning update successful:', data);
-      }
-      */
+      // Send to your REAL federated learning server (direct API)
+      console.log(`🔄 Sending ${isCorrect ? 'CORRECT' : 'INCORRECT'} feedback to federated learning...`);
       
-      // For local development - Direct call to Python ML server
       try {
         const response = await fetch('http://localhost:5000/federated-update', {
           method: 'POST',
@@ -214,18 +188,25 @@ const VoiceEmotion: React.FC<VoiceEmotionProps> = ({ userId, onEmotionConfirmed 
             voiceData: await convertToBase64(audioBlob),
             confirmedEmotion,
             originalEmotion: prediction.emotion,
-            confidence: prediction.confidence
+            confidence: prediction.confidence,
+            feedbackType: isCorrect ? 'CORRECT' : 'INCORRECT'
           })
         });
         
         if (response.ok) {
-          const data = await response.json();
-          console.log('Federated learning update successful:', data);
+          const updateData = await response.json();
+          console.log('✅ Federated learning response:', updateData);
+          
+          if (isCorrect && updateData.modelUpdated) {
+            console.log('🎆 Your VoiceBasedEmotionClassifier model will be improved!');
+          } else if (!isCorrect && !updateData.modelUpdated) {
+            console.log('🛡️ Model protected from incorrect prediction');
+          }
         } else {
-          console.warn('Federated learning update failed, will retry later');
+          console.warn('⚠️ Federated learning server error:', response.status);
         }
       } catch (error) {
-        console.warn('Federated learning update failed:', error);
+        console.warn('⚠️ Federated learning connection failed:', error);
       }
 
       // Notify parent component
@@ -234,10 +215,10 @@ const VoiceEmotion: React.FC<VoiceEmotionProps> = ({ userId, onEmotionConfirmed 
       }
 
       toast({
-        title: isCorrect ? "✅ Emotion Confirmed" : "🔄 Feedback Recorded",
+        title: isCorrect ? "✅ Emotion Confirmed" : "📝 Feedback Recorded",
         description: isCorrect 
-          ? "Thanks for confirming! This helps improve our AI." 
-          : "Thanks for the correction! Our model will learn from this.",
+          ? "Thanks for confirming! Your feedback is being used to improve our AI model." 
+          : "Thanks for the feedback! This helps us understand when predictions need improvement.",
       });
 
       // Reset state
@@ -326,7 +307,7 @@ const VoiceEmotion: React.FC<VoiceEmotionProps> = ({ userId, onEmotionConfirmed 
               </div>
               <div className="space-y-2">
                 <p className="text-lg font-semibold text-red-600">
-                  Recording... {duration}s
+                  Recording... {/* {duration}s */}
                 </p>
                 <Progress value={(duration / 10) * 100} className="w-full" />
                 <p className="text-xs text-muted-foreground">
@@ -342,6 +323,12 @@ const VoiceEmotion: React.FC<VoiceEmotionProps> = ({ userId, onEmotionConfirmed 
 
           {audioBlob && !showConfirmation && (
             <div className="space-y-4">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-3">
+                  🎙️ Recording completed: {duration}s
+                </p>
+              </div>
+              
               <div className="flex items-center justify-center gap-4">
                 <Button 
                   onClick={handlePlayPause} 

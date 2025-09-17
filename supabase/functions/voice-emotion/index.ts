@@ -43,33 +43,85 @@ serve(async (req) => {
 
     console.log(`Processing voice emotion prediction for user ${userId}`);
 
-    // TODO: In a real implementation, this would:
-    // 1. Convert base64 audio to WAV format
-    // 2. Extract MFCC features using librosa equivalent
-    // 3. Load the CNN model and make predictions
-    // 4. Return emotion with confidence scores
-    
-    // For now, we'll simulate the emotion prediction
-    // In production, you'd integrate with Python/TensorFlow.js model
-    const simulatedEmotion = EMOTION_LABELS[Math.floor(Math.random() * EMOTION_LABELS.length)];
-    const confidence = Math.random() * 0.3 + 0.7; // 0.7-1.0 confidence
-    
-    const mentalHealthInfo = EMOTION_MENTAL_HEALTH_MAPPING[simulatedEmotion];
-    
-    const response = {
-      emotion: simulatedEmotion,
-      confidence: confidence,
-      mentalHealth: mentalHealthInfo,
-      timestamp: new Date().toISOString(),
-      requiresConfirmation: true
-    };
+    // Call your REAL VoiceBasedEmotionClassifier ML server - NO FALLBACK
+    try {
+      const mlServerUrl = Deno.env.get('ML_SERVER_URL') || 'http://localhost:5000';
+      
+      const mlServerResponse = await fetch(`${mlServerUrl}/predict`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          audioData: audioData,
+          userId: userId
+        })
+      });
 
-    console.log(`Predicted emotion: ${simulatedEmotion} with confidence: ${confidence.toFixed(3)}`);
+      if (!mlServerResponse.ok) {
+        const errorText = await mlServerResponse.text();
+        console.error(`Real ML server error: ${mlServerResponse.status} - ${errorText}`);
+        return new Response(
+          JSON.stringify({ 
+            error: "Real ML server unavailable",
+            message: "Voice emotion analysis requires the real ML server to be running. No predictions will be made with fake data.",
+            serverStatus: mlServerResponse.status
+          }),
+          { 
+            status: 503,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
+      }
 
-    return new Response(
-      JSON.stringify(response),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+      const mlResult = await mlServerResponse.json();
+      
+      if (mlResult.error) {
+        console.error('ML prediction error:', mlResult.error);
+        return new Response(
+          JSON.stringify({ 
+            error: "ML prediction failed",
+            message: mlResult.error
+          }),
+          { 
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
+      }
+
+      const response = {
+        emotion: mlResult.emotion,
+        confidence: mlResult.confidence,
+        mentalHealth: mlResult.mentalHealth,
+        timestamp: new Date().toISOString(),
+        requiresConfirmation: true,
+        modelVersion: mlResult.modelVersion,
+        modelType: mlResult.modelType || 'VoiceBasedEmotionClassifier_CNN'
+      };
+
+      console.log(`REAL CNN prediction: ${mlResult.emotion} (confidence: ${mlResult.confidence.toFixed(3)})`);
+
+      return new Response(
+        JSON.stringify(response),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+
+    } catch (mlError) {
+      console.error('Failed to connect to real ML server:', mlError);
+      
+      // NO FALLBACK - Protect model integrity
+      return new Response(
+        JSON.stringify({ 
+          error: "Real ML server connection failed",
+          message: "Voice emotion analysis requires the real ML server. Please ensure your VoiceBasedEmotionClassifier server is running."
+        }),
+        { 
+          status: 503,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
 
   } catch (error) {
     console.error('Voice emotion prediction error:', error);

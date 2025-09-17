@@ -28,33 +28,86 @@ serve(async (req) => {
     console.log(`Processing federated learning update for user ${userId}`);
     console.log(`Original emotion: ${originalEmotion}, Confirmed emotion: ${confirmedEmotion}`);
 
-    // In a real implementation, this would:
-    // 1. Store the confirmed voice data in a secure database
-    // 2. Queue the data for batch processing
-    // 3. Trigger federated learning client to connect to server
-    // 4. Update the global model with the new training data
-    // 5. Distribute updated model to all clients
+    // Call REAL federated learning server - same logic as your client/server setup
+    try {
+      const federatedServerUrl = Deno.env.get('FEDERATED_SERVER_URL') || 'http://localhost:5000';
+      
+      // Only process if this is a CORRECT prediction (protect model integrity)
+      const isCorrect = confirmedEmotion === originalEmotion;
+      const feedbackType = isCorrect ? 'CORRECT' : 'INCORRECT';
+      
+      console.log(`Processing ${feedbackType} feedback for federated learning`);
+      
+      const federatedResponse = await fetch(`${federatedServerUrl}/federated-update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: userId,
+          voiceData: voiceData,
+          confirmedEmotion: confirmedEmotion,
+          originalEmotion: originalEmotion,
+          confidence: confidence,
+          feedbackType: feedbackType
+        })
+      });
 
-    // For now, simulate the federated learning process
-    const updateResult = {
-      success: true,
-      updateId: `update_${Date.now()}`,
-      userId: userId,
-      processed: true,
-      federated: {
-        modelVersion: "v1.2.3",
-        contributionAccepted: true,
-        globalModelUpdated: originalEmotion !== confirmedEmotion, // Only update if correction needed
-        nextSyncScheduled: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
-      },
-      privacy: {
-        dataAnonymized: true,
-        localStorageCleared: false, // Keep for user reference
-        serverStorageEncrypted: true
+      if (!federatedResponse.ok) {
+        const errorText = await federatedResponse.text();
+        console.error(`Federated server error: ${federatedResponse.status} - ${errorText}`);
+        return new Response(
+          JSON.stringify({ 
+            error: "Federated learning server unavailable",
+            message: "Model update requires the real federated learning server.",
+            serverStatus: federatedResponse.status
+          }),
+          { 
+            status: 503,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
       }
-    };
 
-    console.log(`Federated learning update completed: ${updateResult.updateId}`);
+      const updateResult = await federatedResponse.json();
+      
+      if (updateResult.error) {
+        console.error('Federated learning error:', updateResult.error);
+        return new Response(
+          JSON.stringify({ 
+            error: "Federated learning failed",
+            message: updateResult.error
+          }),
+          { 
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
+      }
+
+      console.log(`REAL federated learning completed: ${updateResult.updateId}`);
+      console.log(`Model updated: ${updateResult.modelUpdated}`);
+      
+      // Return the real federated learning result
+      const response = {
+        success: true,
+        updateId: updateResult.updateId,
+        userId: userId,
+        processed: true,
+        federated: {
+          modelVersion: updateResult.modelVersion,
+          contributionAccepted: updateResult.contributionAccepted,
+          globalModelUpdated: updateResult.modelUpdated,
+          modelType: updateResult.modelType,
+          impact: updateResult.impact,
+          message: updateResult.message
+        },
+        privacy: {
+          dataAnonymized: true,
+          localStorageCleared: false,
+          serverStorageEncrypted: true
+        }
+      };
 
     return new Response(
       JSON.stringify(updateResult),
