@@ -34,9 +34,9 @@ app = Flask(__name__)
 CORS(app)
 
 # Configuration - Using your exact model paths
-MODEL_PATH = "../../../VoiceBasedEmotionClassifier/models/iesc_cnn_model.h5"
-SCALER_PATH = "../../../VoiceBasedEmotionClassifier/models/scaler.pkl"
-LABEL_ENCODER_PATH = "../../../VoiceBasedEmotionClassifier/models/label_encoder.pkl"
+MODEL_PATH = "D:/Projects/VoiceBasedEmotionClassifier/models/iesc_cnn_model.h5"
+SCALER_PATH = "D:/Projects/VoiceBasedEmotionClassifier/models/scaler.pkl"
+LABEL_ENCODER_PATH = "D:/Projects/VoiceBasedEmotionClassifier/models/label_encoder.pkl"
 
 # Global variables for model components
 model = None
